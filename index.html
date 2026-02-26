@@ -50,15 +50,12 @@
   </div>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, push, onChildAdded, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+  // Gunakan FIRESTORE (bukan database)
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    // Minta nama saat pertama buka
-    const namaUser = prompt("Masukkan nama kamu:") || "Anonim";
-    const myID = Math.random().toString(36).substring(7); // ID unik sederhana
-
-    // KONFIGURASI FIREBASE (Ganti dengan punyamu nanti)
-    const firebaseConfig = {
+  // Konfigurasi sudah benar sesuai fotomu
+  const firebaseConfig = {
     apiKey: "AIzaSyBqguYRzX9J417O3xCej1aUzCNz5YIueuU",
     authDomain: "fosil33-e4e5e.firebaseapp.com",
     projectId: "fosil33-e4e5e",
@@ -68,34 +65,39 @@
     measurementId: "G-64S8YMLWL7"
   };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-    const chatRef = ref(db, 'messages');
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const colRef = collection(db, "pesan");
 
-    // Fungsi Kirim
-    window.kirim = () => {
-      const input = document.getElementById('msgInput');
-      if (input.value.trim() !== "") {
-        push(chatRef, {
-          user: namaUser,
-          userId: myID,
-          text: input.value,
-          time: serverTimestamp()
-        });
-        input.value = "";
-      }
-    };
+  const namaUser = prompt("Masukkan nama kamu:") || "Anonim";
+  const myID = Math.random().toString(36).substring(7);
 
-    // Deteksi tombol Enter
-    document.getElementById('msgInput').addEventListener("keypress", (e) => {
-      if (e.key === "Enter") kirim();
-    });
+  // Fungsi Kirim (Disesuaikan untuk Firestore)
+  window.kirim = async () => {
+    const input = document.getElementById('msgInput');
+    if (input.value.trim() !== "") {
+      await addDoc(colRef, {
+        user: namaUser,
+        userId: myID,
+        text: input.value,
+        time: serverTimestamp()
+      });
+      input.value = "";
+    }
+  };
 
-    // Terima Pesan & Tampilkan
-    onChildAdded(chatRef, (data) => {
-      const msgData = data.val();
-      const container = document.getElementById('chat-container');
-      
+  // Deteksi tombol Enter
+  document.getElementById('msgInput').addEventListener("keypress", (e) => {
+    if (e.key === "Enter") kirim();
+  });
+
+  // Terima Pesan & Tampilkan secara Real-time
+  const q = query(colRef, orderBy("time", "asc"));
+  onSnapshot(q, (snapshot) => {
+    const container = document.getElementById('chat-container');
+    container.innerHTML = ""; // Bersihkan layar sebelum update
+    snapshot.forEach(doc => {
+      const msgData = doc.data();
       const div = document.createElement('div');
       const isMe = msgData.userId === myID;
       
@@ -104,10 +106,10 @@
         <span class="sender">${isMe ? 'Kamu' : msgData.user}</span>
         ${msgData.text}
       `;
-      
       container.appendChild(div);
-      container.scrollTop = container.scrollHeight; // Auto scroll
     });
+    container.scrollTop = container.scrollHeight;
+  });
   </script>
 </body>
 </html>

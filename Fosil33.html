@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ForumSilaturahmi</title>
+  <style>
+    /* CSS Variabel untuk kemudahan ganti warna */
+    :root {
+      --bg-color: #e5ddd5;
+      --primary: #075e54;
+      --secondary: #25d366;
+      --my-bubble: #dcf8c6;
+      --other-bubble: #ffffff;
+    }
+
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg-color); margin: 0; display: flex; flex-direction: column; height: 100vh; }
+    
+    /* Header */
+    header { background: var(--primary); color: white; padding: 15px; text-align: center; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+
+    /* Area Pesan */
+    #chat-container { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
+    
+    /* Bubble Chat */
+    .msg { max-width: 80%; padding: 8px 12px; border-radius: 15px; position: relative; font-size: 14px; line-height: 1.4; animation: pop 0.3s ease; box-shadow: 0 1px 1px rgba(0,0,0,0.1); }
+    @keyframes pop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+    .msg.me { align-self: flex-end; background: var(--my-bubble); border-bottom-right-radius: 2px; }
+    .msg.other { align-self: flex-start; background: var(--other-bubble); border-bottom-left-radius: 2px; }
+    
+    .sender { font-size: 10px; font-weight: bold; color: #555; display: block; margin-bottom: 2px; }
+
+    /* Input Area */
+    .input-box { display: flex; background: #f0f0f0; padding: 10px; align-items: center; gap: 10px; }
+    input { flex: 1; border: none; padding: 12px; border-radius: 25px; outline: none; font-size: 16px; }
+    button { background: var(--secondary); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+    button:active { transform: scale(0.9); }
+  </style>
+</head>
+<body>
+
+  <header>Fosil33 ☕</header>
+
+  <div id="chat-container"></div>
+
+  <div class="input-box">
+    <input type="text" id="msgInput" placeholder="Ketik pesan..." autocomplete="off">
+    <button onclick="kirim()">➤</button>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, push, onChildAdded, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    // Minta nama saat pertama buka
+    const namaUser = prompt("Masukkan nama kamu:") || "Anonim";
+    const myID = Math.random().toString(36).substring(7); // ID unik sederhana
+
+    // KONFIGURASI FIREBASE (Ganti dengan punyamu nanti)
+    const firebaseConfig = {
+    apiKey: "AIzaSyBqguYRzX9J417O3xCej1aUzCNz5YIueuU",
+    authDomain: "fosil33-e4e5e.firebaseapp.com",
+    projectId: "fosil33-e4e5e",
+    storageBucket: "fosil33-e4e5e.firebasestorage.app",
+    messagingSenderId: "891519748664",
+    appId: "1:891519748664:web:c46fcee020e9ed329034cd",
+    measurementId: "G-64S8YMLWL7"
+  };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const chatRef = ref(db, 'messages');
+
+    // Fungsi Kirim
+    window.kirim = () => {
+      const input = document.getElementById('msgInput');
+      if (input.value.trim() !== "") {
+        push(chatRef, {
+          user: namaUser,
+          userId: myID,
+          text: input.value,
+          time: serverTimestamp()
+        });
+        input.value = "";
+      }
+    };
+
+    // Deteksi tombol Enter
+    document.getElementById('msgInput').addEventListener("keypress", (e) => {
+      if (e.key === "Enter") kirim();
+    });
+
+    // Terima Pesan & Tampilkan
+    onChildAdded(chatRef, (data) => {
+      const msgData = data.val();
+      const container = document.getElementById('chat-container');
+      
+      const div = document.createElement('div');
+      const isMe = msgData.userId === myID;
+      
+      div.className = `msg ${isMe ? 'me' : 'other'}`;
+      div.innerHTML = `
+        <span class="sender">${isMe ? 'Kamu' : msgData.user}</span>
+        ${msgData.text}
+      `;
+      
+      container.appendChild(div);
+      container.scrollTop = container.scrollHeight; // Auto scroll
+    });
+  </script>
+</body>
+</html>

@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Fosil33 - Private Forum</title>
   <style>
     :root {
@@ -12,55 +12,104 @@
       --my-gradient: linear-gradient(135deg, #25d366 0%, #075e54 100%);
     }
 
-    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg-pattern); margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+    body { 
+      font-family: 'Segoe UI', sans-serif; 
+      background: var(--bg-pattern); 
+      margin: 0; 
+      display: flex; 
+      flex-direction: column; 
+      height: 100dvh; 
+      overflow: hidden; 
+    }
     
     /* Auth Screen */
-    #auth-screen { position: fixed; inset: 0; background: var(--primary); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 20px; }
-    .auth-box { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); width: 100%; max-width: 350px; text-align: center; }
+    #auth-screen { position: fixed; inset: 0; background: var(--primary); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
+    .auth-box { background: white; padding: 30px; border-radius: 20px; width: 100%; max-width: 350px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+    .auth-box h2 { color: var(--primary); margin-top: 0; }
     .auth-box input { width: 85%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 10px; outline: none; }
     .auth-box button { width: 95%; padding: 12px; background: var(--secondary); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; }
 
-    /* Main App */
-    #main-app { display: none; flex-direction: column; height: 100vh; }
-    header { background: var(--primary); color: white; padding: 12px; text-align: center; font-weight: bold; box-shadow: 0 2px 10px rgba(0,0,0,0.2); z-index: 10; }
+    #main-app { display: none; flex-direction: column; height: 100%; position: relative; }
+
+    /* Header */
+    header { 
+      background: var(--primary); 
+      color: white; 
+      padding: 10px; 
+      text-align: center; 
+      font-weight: bold; 
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2); 
+      flex-shrink: 0;
+      z-index: 10;
+    }
     header .status-online { font-size: 10px; font-weight: normal; color: #adffad; display: block; }
 
-    #chat-container { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 12px; background-image: radial-gradient(#d1c7bc 1px, transparent 1px); background-size: 20px 20px; }
+    /* Chat Area */
+    #chat-container { 
+      flex: 1; 
+      overflow-y: auto; 
+      padding: 15px; 
+      display: flex; 
+      flex-direction: column; 
+      gap: 12px; 
+      background-image: radial-gradient(#d1c7bc 1px, transparent 1px); 
+      background-size: 20px 20px; 
+      scroll-behavior: smooth;
+    }
     
-    /* Msg Bubble */
-    .msg { max-width: 75%; padding: 10px 14px; border-radius: 18px; position: relative; font-size: 14.5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; flex-direction: column; cursor: pointer; }
-    .msg.me { align-self: flex-end; background: var(--my-gradient); color: white; border-bottom-right-radius: 4px; }
-    .msg.other { align-self: flex-start; background: #ffffff; color: #333; border-bottom-left-radius: 4px; }
+    /* Bubble Chat Refined */
+    .msg { max-width: 75%; padding: 8px 12px; border-radius: 15px; position: relative; box-shadow: 0 1px 2px rgba(0,0,0,0.15); display: flex; flex-direction: column; cursor: pointer; }
+    .msg.me { align-self: flex-end; background: var(--my-gradient); color: white; border-bottom-right-radius: 2px; }
+    .msg.other { align-self: flex-start; background: #ffffff; color: #333; border-bottom-left-radius: 2px; }
     
-    /* Fix Reply View */
-    .reply-box-preview { background: rgba(0,0,0,0.08); border-left: 4px solid var(--secondary); padding: 8px; margin-bottom: 8px; border-radius: 6px; }
-    .reply-sender { font-weight: bold; font-size: 11px; display: block; color: var(--primary); margin-bottom: 2px; }
-    .reply-content { font-size: 12px; opacity: 0.9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
-    .msg.me .reply-sender { color: #dcf8c6; }
+    .sender { font-size: 11px; font-weight: bold; margin-bottom: 2px; }
+    .msg.me .sender { color: #adffad; }
+    .msg.other .sender { color: var(--primary); }
 
-    .heart { position: absolute; bottom: -10px; right: 10px; font-size: 16px; background: white; border-radius: 50%; padding: 2px; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
-    .input-container { background: #fff; display: flex; flex-direction: column; border-top: 1px solid #ddd; }
+    /* Reply Style */
+    .reply-box-preview { background: rgba(0,0,0,0.05); border-left: 3px solid var(--secondary); padding: 5px 8px; margin-bottom: 6px; border-radius: 4px; display: block; }
+    .reply-sender { font-weight: bold; font-size: 10px; display: block; margin-bottom: 2px; }
+    .reply-content { font-size: 11px; opacity: 0.8; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .heart { position: absolute; bottom: -8px; right: 8px; font-size: 14px; background: white; border-radius: 12px; padding: 1px 5px; box-shadow: 0 1px 3px rgba(0,0,0,0.2); color: #333; }
+    .time { font-size: 9px; align-self: flex-end; margin-top: 4px; opacity: 0.7; }
+
+    /* Input Area */
+    .input-container { 
+      background: #fff; 
+      display: flex; 
+      flex-direction: column; 
+      border-top: 1px solid #ddd; 
+      padding-bottom: env(safe-area-inset-bottom, 10px); 
+      flex-shrink: 0;
+      z-index: 10;
+    }
     #emoji-bar { display: flex; gap: 15px; padding: 8px 15px; background: #f9f9f9; border-bottom: 1px solid #eee; font-size: 18px; overflow-x: auto; }
     #reply-preview { display: none; background: #f0f0f0; padding: 10px 15px; font-size: 13px; border-left: 5px solid var(--secondary); justify-content: space-between; align-items: center; }
-    .input-box { display: flex; padding: 12px; align-items: center; gap: 10px; }
-    #msgInput { flex: 1; border: 1px solid #ddd; padding: 12px 18px; border-radius: 25px; outline: none; }
-    button.send-btn { background: var(--primary); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; font-size: 20px; }
+    .input-box { display: flex; padding: 10px; align-items: center; gap: 10px; }
+    #msgInput { flex: 1; border: 1px solid #ddd; padding: 12px 15px; border-radius: 25px; outline: none; font-size: 16px; }
+    button.send-btn { background: var(--primary); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; font-size: 20px; flex-shrink: 0; }
 
-    .sender { font-size: 11px; font-weight: bold; margin-bottom: 3px; }
-    .time { font-size: 9px; color: rgba(0,0,0,0.4); align-self: flex-end; margin-top: 5px; }
-    .msg.me .time { color: rgba(255,255,255,0.7); }
-    #typing { font-size: 12px; color: #555; font-style: italic; padding: 5px 15px; height: 20px; }
+    #typing { font-size: 11px; color: #555; font-style: italic; padding: 2px 15px; height: 18px; background: rgba(255,255,255,0.8); }
+
+    /* Floating Button */
+    #new-msg-btn { 
+      position: absolute; bottom: 120px; right: 20px; 
+      background: var(--secondary); color: white; 
+      padding: 8px 15px; border-radius: 20px; 
+      font-size: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); 
+      display: none; cursor: pointer; z-index: 100;
+    }
   </style>
 </head>
 <body>
 
   <div id="auth-screen">
     <div class="auth-box">
-      <h2 style="margin:0;">Fosil33 ☕</h2>
-      <p style="font-size: 12px; color: #666; margin-bottom:20px;">Private Forum Log-in</p>
+      <h2>Fosil33 ☕</h2>
       <input type="text" id="username" placeholder="Username" autocomplete="off">
       <input type="password" id="password" placeholder="Password">
-      <button onclick="handleAuth()">GAS MASUK</button>
+      <button onclick="handleAuth()">MASUK</button>
       <div id="auth-msg" style="color: red; font-size: 11px; margin-top: 10px;"></div>
     </div>
   </div>
@@ -70,7 +119,11 @@
       <span>Fosil33 ☕</span>
       <span id="online-indicator" class="status-online">🟢 Mendeteksi...</span>
     </header>
-    <div id="chat-container"></div>
+
+    <div id="chat-container" onscroll="checkScroll()"></div>
+    
+    <div id="new-msg-btn" onclick="scrollToBottom()">⬇️ Pesan Baru</div>
+    
     <div id="typing"></div> 
     <div class="input-container">
       <div id="reply-preview">
@@ -78,8 +131,7 @@
         <button onclick="cancelReply()" style="border:none; background:none; color:red; font-weight:bold;">X</button>
       </div>
       <div id="emoji-bar">
-        <span onclick="addEmoji('😂')">😂</span><span onclick="addEmoji('🔥')">🔥</span><span onclick="addEmoji('🙌')">🙌</span>
-        <span onclick="addEmoji('👍')">👍</span><span onclick="addEmoji('❤️')">❤️</span><span onclick="addEmoji('✨')">✨</span>
+        <span onclick="addEmoji('😂')">😂</span><span onclick="addEmoji('🔥')">🔥</span><span onclick="addEmoji('👍')">👍</span><span onclick="addEmoji('❤️')">❤️</span><span onclick="addEmoji('✨')">✨</span>
       </div>
       <div class="input-box">
         <input type="text" id="msgInput" placeholder="Ketik pesan..." autocomplete="off">
@@ -112,6 +164,7 @@
     let myID = "";
     let selectedReply = null;
     let lastTap = 0;
+    let isBottom = true;
 
     window.handleAuth = async () => {
       const userVal = document.getElementById('username').value.trim().toLowerCase();
@@ -134,25 +187,30 @@
       initChat();
     }
 
+    window.checkScroll = () => {
+      const c = document.getElementById('chat-container');
+      isBottom = (c.scrollHeight - c.scrollTop - c.clientHeight) < 100;
+      if (isBottom) document.getElementById('new-msg-btn').style.display = 'none';
+    };
+
+    window.scrollToBottom = () => {
+      const c = document.getElementById('chat-container');
+      c.scrollTop = c.scrollHeight;
+      document.getElementById('new-msg-btn').style.display = 'none';
+    };
+
     function initChat() {
-      // Logic Online (Fixing Online Count)
-      const userOnlineDoc = doc(onlineRef, myID);
-      setDoc(userOnlineDoc, { nama: namaUser, lastActive: Date.now() });
-      
-      // Update heartbeat supaya status online tetap akurat
-      setInterval(() => { setDoc(userOnlineDoc, { nama: namaUser, lastActive: Date.now() }); }, 20000);
+      const updateOnline = () => setDoc(doc(onlineRef, myID), { nama: namaUser, lastActive: Date.now() });
+      updateOnline();
+      setInterval(updateOnline, 15000);
 
       onSnapshot(onlineRef, (snapshot) => {
         const now = Date.now();
         let count = 0;
-        snapshot.forEach(doc => {
-          if (now - doc.data().lastActive < 40000) count++; // Anggap offline jika > 40 detik
-          else deleteDoc(doc.ref); // Bersihkan sampah database
-        });
+        snapshot.forEach(d => { if (now - d.data().lastActive < 35000) count++; else deleteDoc(d.ref); });
         document.getElementById('online-indicator').innerText = `🟢 ${count} Orang Online`;
       });
 
-      // Tampilkan Pesan
       onSnapshot(query(colRef, orderBy("time", "asc")), (snapshot) => {
         const container = document.getElementById('chat-container');
         container.innerHTML = "";
@@ -160,23 +218,34 @@
           const d = sDoc.data();
           const isMe = d.user === namaUser;
           const jam = d.time ? new Date(d.time.seconds * 1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '...';
+          
           const div = document.createElement('div');
           div.className = `msg ${isMe ? 'me' : 'other'}`;
           div.onclick = () => handleMsgInteraction(sDoc.id, d.user, d.text, isMe);
           
-          let replyHTML = d.replyTo ? `
-            <div class="reply-box-preview">
-              <span class="reply-sender">${d.replyTo.user}</span>
-              <span class="reply-content">${d.replyTo.text}</span>
-            </div>` : "";
+          let replyHTML = "";
+          if (d.replyTo) {
+            replyHTML = `
+              <div class="reply-box-preview">
+                <span class="reply-sender" style="color: ${isMe ? '#adffad' : 'var(--primary)'}">${d.replyTo.user}</span>
+                <span class="reply-content">${d.replyTo.text}</span>
+              </div>`;
+          }
           
-          div.innerHTML = `<span class="sender" style="color:${isMe ? '#dcf8c6' : '#075e54'}">${isMe ? 'Kamu' : d.user}</span>${replyHTML}<span>${d.text}</span><span class="time">${jam}</span>${d.likes > 0 ? `<div class="heart">❤️ ${d.likes}</div>` : ""}`;
+          div.innerHTML = `
+            <span class="sender">${isMe ? 'Kamu' : d.user}</span>
+            ${replyHTML}
+            <span style="font-size: 14px; line-height: 1.4;">${d.text}</span>
+            <span class="time">${jam}</span>
+            ${d.likes > 0 ? `<div class="heart">❤️ ${d.likes}</div>` : ""}
+          `;
           container.appendChild(div);
         });
-        container.scrollTop = container.scrollHeight;
+
+        if (isBottom) scrollToBottom();
+        else document.getElementById('new-msg-btn').style.display = 'block';
       });
 
-      // Typing Logic
       const inputPesan = document.getElementById('msgInput');
       inputPesan.addEventListener('input', () => {
         if (inputPesan.value.length > 0) setDoc(doc(typingRef, myID), { nama: namaUser });
@@ -192,6 +261,7 @@
     window.kirim = async () => {
       const input = document.getElementById('msgInput');
       if (!input.value.trim()) return;
+      isBottom = true;
       await addDoc(colRef, { user: namaUser, text: input.value, replyTo: selectedReply, likes: 0, time: serverTimestamp() });
       input.value = ""; deleteDoc(doc(typingRef, myID)); cancelReply();
     };
@@ -200,7 +270,7 @@
       const now = Date.now();
       if (now - lastTap < 300) updateDoc(doc(db, "pesan", id), { likes: increment(1) });
       else {
-        if(isMe) { if(confirm("Hapus?")) deleteDoc(doc(db, "pesan", id)); }
+        if(isMe || namaUser === 'admin') { if(confirm("Hapus pesan ini?")) deleteDoc(doc(db, "pesan", id)); }
         else {
           selectedReply = { user, text };
           document.getElementById('reply-preview').style.display = 'flex';
@@ -216,4 +286,4 @@
     document.getElementById('msgInput')?.addEventListener("keypress", (e) => { if (e.key === "Enter") kirim(); });
   </script>
 </body>
-    </html>
+</html>

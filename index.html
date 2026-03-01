@@ -4,15 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Fosil33 - Private Forum</title>
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Fosil33">
-
-<link rel="manifest" href='data:application/manifest+json,{"short_name":"Fosil33","name":"Fosil33 Private Forum","display":"standalone","start_url":"/","background_color":"#075e54","theme_color":"#075e54"}'>
-
-<link rel="icon" href="https://cdn-icons-png.flaticon.com/512/5968/5968841.png">
-<link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/5968/5968841.png">
   <style>
     :root {
       --primary: #075e54;
@@ -21,52 +12,20 @@
       --my-gradient: linear-gradient(135deg, #25d366 0%, #075e54 100%);
     }
 
-    body { 
-      font-family: 'Segoe UI', sans-serif; 
-      background: var(--bg-pattern); 
-      margin: 0; 
-      display: flex; 
-      flex-direction: column; 
-      height: 100dvh; 
-      overflow: hidden; 
-    }
+    body { font-family: 'Segoe UI', sans-serif; background: var(--bg-pattern); margin: 0; display: flex; flex-direction: column; height: 100dvh; overflow: hidden; }
     
-    /* Auth Screen */
     #auth-screen { position: fixed; inset: 0; background: var(--primary); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
     .auth-box { background: white; padding: 30px; border-radius: 20px; width: 100%; max-width: 350px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
-    .auth-box h2 { color: var(--primary); margin-top: 0; }
     .auth-box input { width: 85%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 10px; outline: none; }
     .auth-box button { width: 95%; padding: 12px; background: var(--secondary); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; }
 
     #main-app { display: none; flex-direction: column; height: 100%; position: relative; }
 
-    /* Header */
-    header { 
-      background: var(--primary); 
-      color: white; 
-      padding: 10px; 
-      text-align: center; 
-      font-weight: bold; 
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2); 
-      flex-shrink: 0;
-      z-index: 10;
-    }
+    header { background: var(--primary); color: white; padding: 10px; text-align: center; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.2); flex-shrink: 0; z-index: 10; cursor: pointer; }
     header .status-online { font-size: 10px; font-weight: normal; color: #adffad; display: block; }
 
-    /* Chat Area */
-    #chat-container { 
-      flex: 1; 
-      overflow-y: auto; 
-      padding: 15px; 
-      display: flex; 
-      flex-direction: column; 
-      gap: 12px; 
-      background-image: radial-gradient(#d1c7bc 1px, transparent 1px); 
-      background-size: 20px 20px; 
-      scroll-behavior: smooth;
-    }
+    #chat-container { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 12px; background-image: radial-gradient(#d1c7bc 1px, transparent 1px); background-size: 20px 20px; scroll-behavior: smooth; }
     
-    /* Bubble Chat Refined */
     .msg { max-width: 75%; padding: 8px 12px; border-radius: 15px; position: relative; box-shadow: 0 1px 2px rgba(0,0,0,0.15); display: flex; flex-direction: column; cursor: pointer; }
     .msg.me { align-self: flex-end; background: var(--my-gradient); color: white; border-bottom-right-radius: 2px; }
     .msg.other { align-self: flex-start; background: #ffffff; color: #333; border-bottom-left-radius: 2px; }
@@ -75,7 +34,6 @@
     .msg.me .sender { color: #adffad; }
     .msg.other .sender { color: var(--primary); }
 
-    /* Reply Style */
     .reply-box-preview { background: rgba(0,0,0,0.05); border-left: 3px solid var(--secondary); padding: 5px 8px; margin-bottom: 6px; border-radius: 4px; display: block; }
     .reply-sender { font-weight: bold; font-size: 10px; display: block; margin-bottom: 2px; }
     .reply-content { font-size: 11px; opacity: 0.8; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -83,32 +41,26 @@
     .heart { position: absolute; bottom: -8px; right: 8px; font-size: 14px; background: white; border-radius: 12px; padding: 1px 5px; box-shadow: 0 1px 3px rgba(0,0,0,0.2); color: #333; }
     .time { font-size: 9px; align-self: flex-end; margin-top: 4px; opacity: 0.7; }
 
-    /* Input Area */
-    .input-container { 
-      background: #fff; 
-      display: flex; 
-      flex-direction: column; 
-      border-top: 1px solid #ddd; 
-      padding-bottom: env(safe-area-inset-bottom, 10px); 
-      flex-shrink: 0;
-      z-index: 10;
-    }
+    .input-container { background: #fff; display: flex; flex-direction: column; border-top: 1px solid #ddd; padding-bottom: env(safe-area-inset-bottom, 10px); flex-shrink: 0; z-index: 10; }
     #emoji-bar { display: flex; gap: 15px; padding: 8px 15px; background: #f9f9f9; border-bottom: 1px solid #eee; font-size: 18px; overflow-x: auto; }
     #reply-preview { display: none; background: #f0f0f0; padding: 10px 15px; font-size: 13px; border-left: 5px solid var(--secondary); justify-content: space-between; align-items: center; }
     .input-box { display: flex; padding: 10px; align-items: center; gap: 10px; }
     #msgInput { flex: 1; border: 1px solid #ddd; padding: 12px 15px; border-radius: 25px; outline: none; font-size: 16px; }
     button.send-btn { background: var(--primary); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; font-size: 20px; flex-shrink: 0; }
 
-    #typing { font-size: 11px; color: #555; font-style: italic; padding: 2px 15px; height: 18px; background: rgba(255,255,255,0.8); }
+    #typing { font-size: 11px; color: #555; font-style: italic; padding: 2px 15px; height: 18px; }
+    #new-msg-btn { position: absolute; bottom: 120px; right: 20px; background: var(--secondary); color: white; padding: 8px 15px; border-radius: 20px; font-size: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); display: none; cursor: pointer; z-index: 100; }
 
-    /* Floating Button */
-    #new-msg-btn { 
-      position: absolute; bottom: 120px; right: 20px; 
-      background: var(--secondary); color: white; 
-      padding: 8px 15px; border-radius: 20px; 
-      font-size: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); 
-      display: none; cursor: pointer; z-index: 100;
+    #admin-modal {
+      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+      z-index: 2000; align-items: center; justify-content: center; padding: 20px;
     }
+    .modal-content {
+      background: white; width: 100%; max-width: 400px; border-radius: 20px;
+      padding: 20px; max-height: 80vh; overflow-y: auto; box-sizing: border-box;
+    }
+    .member-row { padding: 12px; border-bottom: 1px solid #eee; display: flex; flex-direction: column; gap: 4px; }
+    .close-btn { background: var(--primary); color: white; width: 100%; border: none; padding: 12px; border-radius: 10px; font-weight: bold; margin-top: 15px; }
   </style>
 </head>
 <body>
@@ -124,16 +76,15 @@
   </div>
 
   <div id="main-app">
-    <header>
+    <header onclick="secretAdminTap()">
       <span>Fosil33 ☕</span>
       <span id="online-indicator" class="status-online">🟢 Mendeteksi...</span>
     </header>
 
     <div id="chat-container" onscroll="checkScroll()"></div>
-    
     <div id="new-msg-btn" onclick="scrollToBottom()">⬇️ Pesan Baru</div>
-    
     <div id="typing"></div> 
+    
     <div class="input-container">
       <div id="reply-preview">
         <div id="reply-text"> Membalas... </div>
@@ -149,9 +100,17 @@
     </div>
   </div>
 
+  <div id="admin-modal">
+    <div class="modal-content">
+      <h3 style="margin-top:0; color:var(--primary);">🕵️ Data Anggota (Rahasia)</h3>
+      <div id="member-list">Sedang memuat...</div>
+      <button class="close-btn" onclick="document.getElementById('admin-modal').style.display='none'">Tutup</button>
+    </div>
+  </div>
+
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, setDoc, getDoc, deleteDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, setDoc, getDoc, deleteDoc, updateDoc, increment, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBqguYRzX9J417O3xCej1aUzCNz5YIueuU",
@@ -174,6 +133,26 @@
     let selectedReply = null;
     let lastTap = 0;
     let isBottom = true;
+    let adminTapCount = 0;
+    let firstLoad = true;
+
+    // --- LOGIKA NOTIFIKASI ---
+    async function requestNotificationPermission() {
+      if ("Notification" in window) {
+        if (Notification.permission !== "granted") {
+          await Notification.requestPermission();
+        }
+      }
+    }
+
+    function showNotification(sender, text) {
+      if (Notification.permission === "granted" && document.hidden) {
+        new Notification(`Fosil33: ${sender}`, {
+          body: text,
+          icon: "https://cdn-icons-png.flaticon.com/512/5968/5968841.png"
+        });
+      }
+    }
 
     window.handleAuth = async () => {
       const userVal = document.getElementById('username').value.trim().toLowerCase();
@@ -193,8 +172,31 @@
       namaUser = user; myID = user;
       document.getElementById('auth-screen').style.display = 'none';
       document.getElementById('main-app').style.display = 'flex';
+      requestNotificationPermission(); 
       initChat();
     }
+
+    window.secretAdminTap = async () => {
+      if (namaUser !== 'admin') return; 
+      adminTapCount++;
+      if (adminTapCount >= 5) {
+        adminTapCount = 0;
+        const modal = document.getElementById('admin-modal');
+        const list = document.getElementById('member-list');
+        modal.style.display = 'flex';
+        list.innerHTML = "Mengambil data...";
+        
+        const snap = await getDocs(usersRef);
+        list.innerHTML = "";
+        snap.forEach(d => {
+          const row = document.createElement('div');
+          row.className = 'member-row';
+          row.innerHTML = `<span style="font-weight:bold;">👤 ${d.id}</span><span style="font-size:12px; color:gray;">Password: ${d.data().pass}</span>`;
+          list.appendChild(row);
+        });
+      }
+      setTimeout(() => { adminTapCount = 0; }, 2000);
+    };
 
     window.checkScroll = () => {
       const c = document.getElementById('chat-container');
@@ -222,35 +224,34 @@
 
       onSnapshot(query(colRef, orderBy("time", "asc")), (snapshot) => {
         const container = document.getElementById('chat-container');
+        
+        // Logika Notifikasi untuk Pesan Baru
+        if (!firstLoad) {
+          snapshot.docChanges().forEach((change) => {
+            if (change.type === "added") {
+              const d = change.doc.data();
+              if (d.user !== namaUser) {
+                showNotification(d.user, d.text);
+              }
+            }
+          });
+        }
+        firstLoad = false;
+
         container.innerHTML = "";
         snapshot.forEach(sDoc => {
           const d = sDoc.data();
           const isMe = d.user === namaUser;
           const jam = d.time ? new Date(d.time.seconds * 1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '...';
-          
           const div = document.createElement('div');
           div.className = `msg ${isMe ? 'me' : 'other'}`;
           div.onclick = () => handleMsgInteraction(sDoc.id, d.user, d.text, isMe);
           
-          let replyHTML = "";
-          if (d.replyTo) {
-            replyHTML = `
-              <div class="reply-box-preview">
-                <span class="reply-sender" style="color: ${isMe ? '#adffad' : 'var(--primary)'}">${d.replyTo.user}</span>
-                <span class="reply-content">${d.replyTo.text}</span>
-              </div>`;
-          }
+          let replyHTML = d.replyTo ? `<div class="reply-box-preview"><span class="reply-sender" style="color:${isMe?'#adffad':'var(--primary)'}">${d.replyTo.user}</span><span class="reply-content">${d.replyTo.text}</span></div>` : "";
           
-          div.innerHTML = `
-            <span class="sender">${isMe ? 'Kamu' : d.user}</span>
-            ${replyHTML}
-            <span style="font-size: 14px; line-height: 1.4;">${d.text}</span>
-            <span class="time">${jam}</span>
-            ${d.likes > 0 ? `<div class="heart">❤️ ${d.likes}</div>` : ""}
-          `;
+          div.innerHTML = `<span class="sender">${isMe ? 'Kamu' : d.user}</span>${replyHTML}<span style="font-size:14px; line-height:1.4;">${d.text}</span><span class="time">${jam}</span>${d.likes > 0 ? `<div class="heart">❤️ ${d.likes}</div>` : ""}`;
           container.appendChild(div);
         });
-
         if (isBottom) scrollToBottom();
         else document.getElementById('new-msg-btn').style.display = 'block';
       });
@@ -279,7 +280,7 @@
       const now = Date.now();
       if (now - lastTap < 300) updateDoc(doc(db, "pesan", id), { likes: increment(1) });
       else {
-        if(isMe || namaUser === 'admin') { if(confirm("Hapus pesan ini?")) deleteDoc(doc(db, "pesan", id)); }
+        if(isMe || namaUser === 'admin') { if(confirm("Hapus?")) deleteDoc(doc(db, "pesan", id)); }
         else {
           selectedReply = { user, text };
           document.getElementById('reply-preview').style.display = 'flex';

@@ -3,63 +3,39 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Fosil33 - Private Forum</title>
+  <title>Fosil33 - Admin Power</title>
   <style>
-    :root {
-      --primary: #075e54;
-      --secondary: #25d366;
-      --bg-pattern: #e5ddd5;
-      --my-gradient: linear-gradient(135deg, #25d366 0%, #075e54 100%);
-    }
-
+    :root { --primary: #075e54; --secondary: #25d366; --bg-pattern: #e5ddd5; --my-gradient: linear-gradient(135deg, #25d366 0%, #075e54 100%); }
     body { font-family: 'Segoe UI', sans-serif; background: var(--bg-pattern); margin: 0; display: flex; flex-direction: column; height: 100dvh; overflow: hidden; }
-    
     #auth-screen { position: fixed; inset: 0; background: var(--primary); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
     .auth-box { background: white; padding: 30px; border-radius: 20px; width: 100%; max-width: 350px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
     .auth-box input { width: 85%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 10px; outline: none; }
     .auth-box button { width: 95%; padding: 12px; background: var(--secondary); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; }
-
     #main-app { display: none; flex-direction: column; height: 100%; position: relative; }
-
     header { background: var(--primary); color: white; padding: 10px; text-align: center; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.2); flex-shrink: 0; z-index: 10; display: flex; justify-content: space-between; align-items: center; }
     header .status-online { font-size: 10px; font-weight: normal; color: #adffad; }
-
     #chat-container { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 12px; background-image: radial-gradient(#d1c7bc 1px, transparent 1px); background-size: 20px 20px; scroll-behavior: smooth; }
-    
     .msg { max-width: 75%; padding: 8px 12px; border-radius: 15px; position: relative; box-shadow: 0 1px 2px rgba(0,0,0,0.15); display: flex; flex-direction: column; cursor: pointer; font-size: 14px; }
     .msg.me { align-self: flex-end; background: var(--my-gradient); color: white; border-bottom-right-radius: 2px; }
     .msg.other { align-self: flex-start; background: #ffffff; color: #333; border-bottom-left-radius: 2px; }
-    .msg.system { align-self: center; background: #333; color: gold; border-radius: 10px; font-size: 12px; text-align: center; max-width: 90%; padding: 10px; }
-    
+    .msg.system { align-self: center; background: #333; color: gold; border-radius: 10px; font-size: 12px; text-align: center; max-width: 90%; padding: 10px; border: 1px solid gold; }
     .sender { font-size: 11px; font-weight: bold; margin-bottom: 2px; }
     .msg.me .sender { color: #adffad; }
     .msg.other .sender { color: var(--primary); }
-
     .reply-box-preview { background: rgba(0,0,0,0.05); border-left: 3px solid var(--secondary); padding: 5px 8px; margin-bottom: 6px; border-radius: 4px; display: block; }
-    .reply-sender { font-weight: bold; font-size: 10px; display: block; margin-bottom: 2px; }
-    .reply-content { font-size: 11px; opacity: 0.8; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
     .time { font-size: 9px; align-self: flex-end; margin-top: 4px; opacity: 0.7; }
-
     .input-container { background: #fff; display: flex; flex-direction: column; border-top: 1px solid #ddd; padding-bottom: env(safe-area-inset-bottom, 10px); flex-shrink: 0; z-index: 10; }
-    #emoji-bar { display: flex; gap: 15px; padding: 8px 15px; background: #f9f9f9; border-bottom: 1px solid #eee; font-size: 18px; overflow-x: auto; }
     #reply-preview { display: none; background: #f0f0f0; padding: 10px 15px; font-size: 13px; border-left: 5px solid var(--secondary); justify-content: space-between; align-items: center; }
+    #vote-bar { background: #fffbe6; color: #856404; font-size: 11px; padding: 5px 15px; border-bottom: 1px solid #ffeeba; display: none; font-weight: bold; }
     .input-box { display: flex; padding: 10px; align-items: center; gap: 10px; }
     #msgInput { flex: 1; border: 1px solid #ddd; padding: 12px 15px; border-radius: 25px; outline: none; font-size: 16px; }
     button.send-btn { background: var(--primary); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; font-size: 20px; flex-shrink: 0; }
-
     #typing { font-size: 11px; color: #555; font-style: italic; padding: 2px 15px; height: 18px; }
-
-    #admin-modal, #game-modal {
-      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85);
-      z-index: 2000; align-items: center; justify-content: center; padding: 20px;
-    }
-    .modal-content {
-      background: white; width: 100%; max-width: 400px; border-radius: 20px;
-      padding: 20px; text-align: center; box-sizing: border-box;
-    }
+    #admin-modal, #game-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 2000; align-items: center; justify-content: center; padding: 20px; }
+    .modal-content { background: white; width: 100%; max-width: 400px; border-radius: 20px; padding: 20px; text-align: center; box-sizing: border-box; }
     .close-btn { background: var(--primary); color: white; width: 100%; border: none; padding: 12px; border-radius: 10px; font-weight: bold; margin-top: 15px; cursor: pointer; }
-    .join-btn { background: gold; border: none; border-radius: 5px; padding: 8px 15px; margin-top: 8px; font-weight: bold; cursor: pointer; color: black; }
+    .join-btn { background: gold; border: none; border-radius: 5px; padding: 8px 15px; margin-top: 8px; font-weight: bold; cursor: pointer; color: black; font-size: 12px; }
+    .ban-btn { background: #ff4d4d; color: white; border: none; border-radius: 5px; padding: 2px 8px; font-size: 10px; cursor: pointer; margin-left: 10px; }
   </style>
 </head>
 <body>
@@ -77,23 +53,21 @@
   <div id="main-app">
     <header>
       <span onclick="openLoneWolf()" style="font-size:20px; cursor:pointer;">🐺</span>
-      <div onclick="secretAdminTap()">
+      <div id="admin-trigger">
         <span>Fosil33 ☕</span>
         <span id="online-indicator" class="status-online">🟢 Mendeteksi...</span>
       </div>
-      <span onclick="alert('Ketik /startimpostor untuk main tebak kata!')" style="font-size:20px; cursor:pointer;">🕵️</span>
+      <span onclick="alert('🎮 COMMANDS:\n/matematika - Game Logika\n/startimpostor - Undercover\n/startvote - Buka Voting\n/vote [nama] - Tuduh Orang')" style="font-size:20px; cursor:pointer;">🕵️</span>
     </header>
 
     <div id="chat-container"></div>
     <div id="typing"></div> 
     
     <div class="input-container">
+      <div id="vote-bar"></div>
       <div id="reply-preview">
         <div id="reply-text"> Membalas... </div>
         <button onclick="cancelReply()" style="border:none; background:none; color:red; font-weight:bold;">X</button>
-      </div>
-      <div id="emoji-bar">
-        <span onclick="addEmoji('😂')">😂</span><span onclick="addEmoji('🔥')">🔥</span><span onclick="addEmoji('👍')">👍</span><span onclick="addEmoji('❤️')">❤️</span><span onclick="addEmoji('🐺')">🐺</span>
       </div>
       <div class="input-box">
         <input type="text" id="msgInput" placeholder="Ketik pesan..." autocomplete="off">
@@ -104,8 +78,8 @@
 
   <div id="admin-modal">
     <div class="modal-content">
-      <h3 style="color:var(--primary);">🕵️ Data Anggota</h3>
-      <div id="member-list" style="max-height: 200px; overflow-y: auto;"></div>
+      <h3 style="color:var(--primary);">🕵️ Admin Panel</h3>
+      <div id="member-list" style="max-height: 280px; overflow-y: auto; text-align: left; border-top: 1px solid #eee; padding-top:10px;"></div>
       <button class="close-btn" onclick="document.getElementById('admin-modal').style.display='none'">Tutup</button>
     </div>
   </div>
@@ -113,9 +87,8 @@
   <div id="game-modal">
     <div class="modal-content">
       <h3 style="color:#333;">🐺 LONE WOLF CHALLENGE</h3>
-      <p>Buktikan kecepatan logikamu!</p>
       <h1 id="question">?</h1>
-      <input type="number" id="game-answer" placeholder="Jawaban..." style="width:80%; padding:12px; font-size:20px; border:2px solid var(--primary); border-radius:10px; outline:none;">
+      <input type="number" id="game-answer" placeholder="Jawaban..." style="width:80%; padding:12px; font-size:20px; border:2px solid var(--primary); border-radius:10px;">
       <button class="close-btn" style="background:orange; color:black;" onclick="checkLoneWolf()">SUBMIT</button>
       <button class="close-btn" style="background:#eee; color:#333;" onclick="closeGame()">CLOSE</button>
     </div>
@@ -140,27 +113,30 @@
     const typingRef = collection(db, "typing");
     const onlineRef = collection(db, "online_users");
     const usersRef = collection(db, "users");
+    const votesRef = collection(db, "votes");
 
     let namaUser = ""; let myID = ""; let selectedReply = null;
-    let lastTap = 0; let adminTapCount = 0; let firstLoad = true; let gameAns = 0;
-    let lastWinner = "";
+    let adminTapCount = 0; let lastTap = 0; let gameAns = 0; let lastWinner = "";
 
     const daftarKata = [
-      { warga: "Kucing", impostor: "Harimau" },
-      { warga: "Masjid", impostor: "Musholla" },
-      { warga: "Buku", impostor: "Novel" },
-      { warga: "Kopi", impostor: "Teh" },
-      { warga: "Sajadah", impostor: "Karpet" }
+      { warga: "Kucing", impostor: "Harimau" }, { warga: "Masjid", impostor: "Musholla" },
+      { warga: "Kopi", impostor: "Teh" }, { warga: "Sajadah", impostor: "Karpet" }
     ];
 
     window.handleAuth = async () => {
       const u = document.getElementById('username').value.trim().toLowerCase();
       const p = document.getElementById('password').value.trim();
       if (!u || !p) return;
+      
       const d = await getDoc(doc(usersRef, u));
-      if (d.exists() && d.data().pass === p) startApp(u);
-      else if (!d.exists()) { await setDoc(doc(usersRef, u), { pass: p }); startApp(u); }
-      else document.getElementById('auth-msg').innerText = "Password salah!";
+      if (d.exists()) {
+        if (d.data().isBanned) return alert("Akun Anda telah dibanned!");
+        if (d.data().pass === p) startApp(u);
+        else document.getElementById('auth-msg').innerText = "Password salah!";
+      } else {
+        await setDoc(doc(usersRef, u), { pass: p, isBanned: false });
+        startApp(u);
+      }
     };
 
     function startApp(u) {
@@ -170,37 +146,75 @@
       initChat();
     }
 
+    // ADMIN TRIGGER (5x Taps)
+    document.getElementById('admin-trigger').onclick = async () => {
+      if (namaUser !== 'admin') return;
+      adminTapCount++;
+      if (adminTapCount >= 5) {
+        adminTapCount = 0;
+        document.getElementById('admin-modal').style.display = 'flex';
+        renderAdminPanel();
+      }
+      setTimeout(() => adminTapCount = 0, 3000);
+    };
+
+    async function renderAdminPanel() {
+      const sUsers = await getDocs(usersRef);
+      const sOnline = await getDocs(onlineRef);
+      const now = Date.now();
+      let h = "<b style='color:var(--primary)'>👤 SEMUA MEMBER:</b><br>";
+      sUsers.forEach(d => {
+        if(d.id === 'admin') return;
+        h += `<div style="padding:8px 0; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center; font-size:12px;">
+                <span>${d.id} | ${d.data().pass} ${d.data().isBanned ? '🚫' : ''}</span>
+                <button class="ban-btn" onclick="toggleBan('${d.id}', ${d.data().isBanned})">${d.data().isBanned ? 'Unban' : 'BAN'}</button>
+              </div>`;
+      });
+      h += "<br><b style='color:green'>🟢 ONLINE:</b><br>";
+      sOnline.forEach(d => { if (now - d.data().lastActive < 35000) h += `<div style="font-size:12px; padding:3px 0;">✅ ${d.data().nama}</div>`; });
+      document.getElementById('member-list').innerHTML = h;
+    }
+
+    window.toggleBan = async (uid, currentStatus) => {
+      if (!confirm(`Yakin ingin ${currentStatus ? 'Unban' : 'BAN'} ${uid}?`)) return;
+      await updateDoc(doc(usersRef, uid), { isBanned: !currentStatus });
+      alert("Berhasil!"); renderAdminPanel();
+    };
+
     window.openLoneWolf = () => {
       const a = Math.floor(Math.random() * 80) + 10;
       const b = Math.floor(Math.random() * 80) + 10;
       gameAns = a + b;
       document.getElementById('question').innerText = `${a} + ${b}`;
       document.getElementById('game-modal').style.display = 'flex';
-      document.getElementById('game-answer').value = ""; document.getElementById('game-answer').focus();
     };
-    window.closeGame = () => { document.getElementById('game-modal').style.display = 'none'; };
+    window.closeGame = () => document.getElementById('game-modal').style.display = 'none';
     window.checkLoneWolf = async () => {
       if (parseInt(document.getElementById('game-answer').value) === gameAns) {
         closeGame();
         await addDoc(colRef, { user: "SYSTEM 🐺", text: `🔥 @${namaUser} MENANG! Gelar Lone Wolf didapatkan.`, isSystem: true, time: serverTimestamp() });
-      } else { alert("Salah!"); }
+      } else alert("Salah!");
     };
 
     window.mulaiGameImpostor = async () => {
       const set = daftarKata[Math.floor(Math.random() * daftarKata.length)];
       const snap = await getDocs(onlineRef);
-      let users = [];
-      snap.forEach(d => users.push(d.id));
+      let users = []; snap.forEach(d => users.push(d.id));
       if (users.length < 3) return alert("Butuh min 3 orang online!");
       const imp = users[Math.floor(Math.random() * users.length)];
-      await addDoc(colRef, { 
-        user: "MODERATOR 🕵️", 
-        text: `GAME DIMULAI! Silakan cek kata kunci masing-masing. Jelaskan tanpa menyebutkan katanya!`, 
-        isSystem: true, isImpostorGame: true, targetImp: imp, kataW: set.warga, kataI: set.impostor, time: serverTimestamp() 
-      });
+      await addDoc(colRef, { user: "MODERATOR 🕵️", text: `GAME DIMULAI! Silakan cek kata kunci masing-masing. Jelaskan tanpa menyebutkan katanya!`, isSystem: true, isImpostorGame: true, targetImp: imp, kataW: set.warga, kataI: set.impostor, time: serverTimestamp() });
+    };
+
+    window.mulaiVoting = async () => {
+      const oldVotes = await getDocs(votesRef);
+      oldVotes.forEach(async (d) => await deleteDoc(d.ref));
+      await addDoc(colRef, { user: "MODERATOR 🕵️", text: `⚠️ SESI VOTING DIMULAI! Ketik "/vote [nama]" untuk menuduh Impostor!`, isSystem: true, time: serverTimestamp() });
     };
 
     function initChat() {
+      // CEK REALTIME BAN
+      onSnapshot(doc(usersRef, namaUser), d => { if (d.exists() && d.data().isBanned) location.reload(); });
+
       const upd = () => setDoc(doc(onlineRef, myID), { nama: namaUser, lastActive: Date.now() });
       upd(); setInterval(upd, 15000);
 
@@ -210,32 +224,26 @@
         document.getElementById('online-indicator').innerText = `🟢 ${c} Online`;
       });
 
+      onSnapshot(votesRef, s => {
+        let r = {}; s.forEach(d => { r[d.data().target] = (r[d.data().target] || 0) + 1; });
+        let h = "VOTES: "; for (let t in r) h += `${t}(${r[t]}) `;
+        const vBar = document.getElementById('vote-bar');
+        if (s.size > 0) { vBar.style.display = 'block'; vBar.innerText = h; } else { vBar.style.display = 'none'; }
+      });
+
       onSnapshot(query(colRef, orderBy("time", "asc")), s => {
         const container = document.getElementById('chat-container');
-        s.forEach(ds => {
-          const d = ds.data();
-          if (d.isSystem && d.text.includes("MENANG!")) {
-            const match = d.text.match(/@(\w+)/);
-            if (match) lastWinner = match[1];
-          }
-        });
-
+        s.forEach(ds => { if (ds.data().isSystem && ds.data().text.includes("MENANG!")) { const m = ds.data().text.match(/@(\w+)/); if (m) lastWinner = m[1]; } });
         container.innerHTML = "";
         s.forEach(ds => {
           const d = ds.data(); const isMe = d.user === namaUser; const isSys = d.isSystem;
           const badge = (d.user === lastWinner) ? " 👑" : "";
           const div = document.createElement('div');
           div.className = `msg ${isSys ? 'system' : (isMe ? 'me' : 'other')}`;
-          
           let actionBtn = "";
           if (d.isInvite) actionBtn = `<br><button class="join-btn" onclick="openLoneWolf()">[ IKUTI TANTANGAN ]</button>`;
-          if (d.isImpostorGame) {
-            const k = (namaUser === d.targetImp) ? d.kataI : d.kataW;
-            actionBtn = `<br><button class="join-btn" onclick="alert('Kata kunci kamu: ${k}')">👁️ CEK KATA SAYA</button>`;
-          }
-
-          let content = isSys ? `<b>${d.text}</b>${actionBtn}` : `<span class="sender">${isMe ? 'Kamu' : d.user}${badge}</span>${d.replyTo ? `<div class="reply-box-preview"><span class="reply-sender">${d.replyTo.user}</span><span class="reply-content">${d.replyTo.text}</span></div>` : ""}<span>${d.text}</span>`;
-          
+          if (d.isImpostorGame) { const k = (namaUser === d.targetImp) ? d.kataI : d.kataW; actionBtn = `<br><button class="join-btn" onclick="alert('Kata kunci kamu: ${k}')">👁️ CEK KATA SAYA</button>`; }
+          let content = isSys ? `<b>${d.text}</b>${actionBtn}` : `<span class="sender">${isMe ? 'Kamu' : d.user}${badge}</span>${d.replyTo ? `<div class="reply-box-preview"><span class="reply-sender" style="font-size:10px; font-weight:bold;">${d.replyTo.user}</span><span style="font-size:11px; opacity:0.8; display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${d.replyTo.text}</span></div>` : ""}<span>${d.text}</span>`;
           div.innerHTML = content + (isSys ? "" : `<span class="time">${d.time ? new Date(d.time.seconds*1000).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '...'}</span>`);
           div.onclick = () => { if (!isSys) handleMsg(ds.id, d.user, d.text, isMe); };
           container.appendChild(div);
@@ -244,23 +252,17 @@
       });
 
       const inp = document.getElementById('msgInput');
-      inp.addEventListener('input', () => { if (inp.value) setDoc(doc(typingRef, myID), { nama: namaUser }); else deleteDoc(doc(typingRef, myID)); });
+      inp.oninput = () => { if (inp.value) setDoc(doc(typingRef, myID), { nama: namaUser }); else deleteDoc(doc(typingRef, myID)); };
       onSnapshot(typingRef, s => { let u = []; s.forEach(d => { if (d.id !== myID) u.push(d.data().nama); }); document.getElementById('typing').innerText = u.length ? `${u.join(', ')} ngetik...` : ''; });
     }
 
     window.kirim = async () => {
       const i = document.getElementById('msgInput'); const val = i.value.trim();
       if (!val) return;
-      if (val === "/matematika") {
-        i.value = ""; if (confirm("Kirim tantangan ke forum?")) {
-          await addDoc(colRef, { user: "SYSTEM 🤖", text: `📢 @${namaUser} menantang siapa pun adu cerdas!`, isSystem: true, isInvite: true, time: serverTimestamp() });
-          openLoneWolf();
-        }
-        return;
-      }
-      if (val === "/startimpostor") {
-        i.value = ""; mulaiGameImpostor(); return;
-      }
+      if (val === "/matematika") { i.value = ""; if (confirm("Tantangan matematika?")) await addDoc(colRef, { user: "SYSTEM 🤖", text: `📢 @${namaUser} menantang siapa pun!`, isSystem: true, isInvite: true, time: serverTimestamp() }); return; }
+      if (val === "/startimpostor") { i.value = ""; mulaiGameImpostor(); return; }
+      if (val === "/startvote") { i.value = ""; mulaiVoting(); return; }
+      if (val.startsWith("/vote ")) { const t = val.replace("/vote ", "").toLowerCase(); i.value = ""; await setDoc(doc(votesRef, namaUser), { voter: namaUser, target: t }); alert(`Voted: ${t}`); return; }
       await addDoc(colRef, { user: namaUser, text: val, replyTo: selectedReply, time: serverTimestamp() });
       i.value = ""; cancelReply(); deleteDoc(doc(typingRef, myID));
     };
@@ -270,19 +272,12 @@
       if (now - lastTap < 300) updateDoc(doc(db, "pesan", id), { likes: increment(1) });
       else {
         if (isMe || namaUser === 'admin') { if (confirm("Hapus?")) deleteDoc(doc(db, "pesan", id)); }
-        else {
-          selectedReply = { user: u, text: t };
-          document.getElementById('reply-preview').style.display = 'flex';
-          document.getElementById('reply-text').innerText = `Balas ${u}: ${t.substring(0,15)}...`;
-          document.getElementById('msgInput').focus();
-        }
+        else { selectedReply = { user: u, text: t }; document.getElementById('reply-preview').style.display = 'flex'; document.getElementById('reply-text').innerText = `Balas ${u}: ${t.substring(0,15)}...`; document.getElementById('msgInput').focus(); }
       }
       lastTap = now;
     };
-
     window.cancelReply = () => { selectedReply = null; document.getElementById('reply-preview').style.display = 'none'; };
-    window.addEmoji = (e) => { const i = document.getElementById('msgInput'); i.value += e; i.focus(); };
     document.getElementById('msgInput').addEventListener("keypress", (e) => { if (e.key === "Enter") kirim(); });
   </script>
 </body>
-</html>
+        </html>

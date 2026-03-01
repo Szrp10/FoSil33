@@ -21,14 +21,15 @@
 
     #main-app { display: none; flex-direction: column; height: 100%; position: relative; }
 
-    header { background: var(--primary); color: white; padding: 10px; text-align: center; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.2); flex-shrink: 0; z-index: 10; cursor: pointer; }
-    header .status-online { font-size: 10px; font-weight: normal; color: #adffad; display: block; }
+    header { background: var(--primary); color: white; padding: 10px; text-align: center; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.2); flex-shrink: 0; z-index: 10; display: flex; justify-content: space-between; align-items: center; }
+    header .status-online { font-size: 10px; font-weight: normal; color: #adffad; }
 
     #chat-container { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 12px; background-image: radial-gradient(#d1c7bc 1px, transparent 1px); background-size: 20px 20px; scroll-behavior: smooth; }
     
-    .msg { max-width: 75%; padding: 8px 12px; border-radius: 15px; position: relative; box-shadow: 0 1px 2px rgba(0,0,0,0.15); display: flex; flex-direction: column; cursor: pointer; }
+    .msg { max-width: 75%; padding: 8px 12px; border-radius: 15px; position: relative; box-shadow: 0 1px 2px rgba(0,0,0,0.15); display: flex; flex-direction: column; cursor: pointer; font-size: 14px; }
     .msg.me { align-self: flex-end; background: var(--my-gradient); color: white; border-bottom-right-radius: 2px; }
     .msg.other { align-self: flex-start; background: #ffffff; color: #333; border-bottom-left-radius: 2px; }
+    .msg.system { align-self: center; background: #333; color: gold; border-radius: 10px; font-size: 12px; text-align: center; max-width: 90%; padding: 10px; }
     
     .sender { font-size: 11px; font-weight: bold; margin-bottom: 2px; }
     .msg.me .sender { color: #adffad; }
@@ -38,7 +39,6 @@
     .reply-sender { font-weight: bold; font-size: 10px; display: block; margin-bottom: 2px; }
     .reply-content { font-size: 11px; opacity: 0.8; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-    .heart { position: absolute; bottom: -8px; right: 8px; font-size: 14px; background: white; border-radius: 12px; padding: 1px 5px; box-shadow: 0 1px 3px rgba(0,0,0,0.2); color: #333; }
     .time { font-size: 9px; align-self: flex-end; margin-top: 4px; opacity: 0.7; }
 
     .input-container { background: #fff; display: flex; flex-direction: column; border-top: 1px solid #ddd; padding-bottom: env(safe-area-inset-bottom, 10px); flex-shrink: 0; z-index: 10; }
@@ -49,18 +49,17 @@
     button.send-btn { background: var(--primary); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; font-size: 20px; flex-shrink: 0; }
 
     #typing { font-size: 11px; color: #555; font-style: italic; padding: 2px 15px; height: 18px; }
-    #new-msg-btn { position: absolute; bottom: 120px; right: 20px; background: var(--secondary); color: white; padding: 8px 15px; border-radius: 20px; font-size: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); display: none; cursor: pointer; z-index: 100; }
 
-    #admin-modal {
+    #admin-modal, #game-modal {
       display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85);
       z-index: 2000; align-items: center; justify-content: center; padding: 20px;
     }
     .modal-content {
       background: white; width: 100%; max-width: 400px; border-radius: 20px;
-      padding: 20px; max-height: 80vh; overflow-y: auto; box-sizing: border-box;
+      padding: 20px; text-align: center; box-sizing: border-box;
     }
-    .member-row { padding: 12px; border-bottom: 1px solid #eee; display: flex; flex-direction: column; gap: 4px; }
-    .close-btn { background: var(--primary); color: white; width: 100%; border: none; padding: 12px; border-radius: 10px; font-weight: bold; margin-top: 15px; }
+    .close-btn { background: var(--primary); color: white; width: 100%; border: none; padding: 12px; border-radius: 10px; font-weight: bold; margin-top: 15px; cursor: pointer; }
+    .join-btn { background: gold; border: none; border-radius: 5px; padding: 8px 15px; margin-top: 8px; font-weight: bold; cursor: pointer; color: black; }
   </style>
 </head>
 <body>
@@ -76,13 +75,16 @@
   </div>
 
   <div id="main-app">
-    <header onclick="secretAdminTap()">
-      <span>Fosil33 ☕</span>
-      <span id="online-indicator" class="status-online">🟢 Mendeteksi...</span>
+    <header>
+      <span onclick="openLoneWolf()" style="font-size:20px; cursor:pointer;">🐺</span>
+      <div onclick="secretAdminTap()">
+        <span>Fosil33 ☕</span>
+        <span id="online-indicator" class="status-online">🟢 Mendeteksi...</span>
+      </div>
+      <span onclick="alert('Ketik /startimpostor untuk main tebak kata!')" style="font-size:20px; cursor:pointer;">🕵️</span>
     </header>
 
-    <div id="chat-container" onscroll="checkScroll()"></div>
-    <div id="new-msg-btn" onclick="scrollToBottom()">⬇️ Pesan Baru</div>
+    <div id="chat-container"></div>
     <div id="typing"></div> 
     
     <div class="input-container">
@@ -91,7 +93,7 @@
         <button onclick="cancelReply()" style="border:none; background:none; color:red; font-weight:bold;">X</button>
       </div>
       <div id="emoji-bar">
-        <span onclick="addEmoji('😂')">😂</span><span onclick="addEmoji('🔥')">🔥</span><span onclick="addEmoji('👍')">👍</span><span onclick="addEmoji('❤️')">❤️</span><span onclick="addEmoji('✨')">✨</span>
+        <span onclick="addEmoji('😂')">😂</span><span onclick="addEmoji('🔥')">🔥</span><span onclick="addEmoji('👍')">👍</span><span onclick="addEmoji('❤️')">❤️</span><span onclick="addEmoji('🐺')">🐺</span>
       </div>
       <div class="input-box">
         <input type="text" id="msgInput" placeholder="Ketik pesan..." autocomplete="off">
@@ -102,9 +104,20 @@
 
   <div id="admin-modal">
     <div class="modal-content">
-      <h3 style="margin-top:0; color:var(--primary);">🕵️ Data Anggota (Rahasia)</h3>
-      <div id="member-list">Sedang memuat...</div>
+      <h3 style="color:var(--primary);">🕵️ Data Anggota</h3>
+      <div id="member-list" style="max-height: 200px; overflow-y: auto;"></div>
       <button class="close-btn" onclick="document.getElementById('admin-modal').style.display='none'">Tutup</button>
+    </div>
+  </div>
+
+  <div id="game-modal">
+    <div class="modal-content">
+      <h3 style="color:#333;">🐺 LONE WOLF CHALLENGE</h3>
+      <p>Buktikan kecepatan logikamu!</p>
+      <h1 id="question">?</h1>
+      <input type="number" id="game-answer" placeholder="Jawaban..." style="width:80%; padding:12px; font-size:20px; border:2px solid var(--primary); border-radius:10px; outline:none;">
+      <button class="close-btn" style="background:orange; color:black;" onclick="checkLoneWolf()">SUBMIT</button>
+      <button class="close-btn" style="background:#eee; color:#333;" onclick="closeGame()">CLOSE</button>
     </div>
   </div>
 
@@ -128,163 +141,139 @@
     const onlineRef = collection(db, "online_users");
     const usersRef = collection(db, "users");
 
-    let namaUser = "";
-    let myID = "";
-    let selectedReply = null;
-    let lastTap = 0;
-    let isBottom = true;
-    let adminTapCount = 0;
-    let firstLoad = true;
+    let namaUser = ""; let myID = ""; let selectedReply = null;
+    let lastTap = 0; let adminTapCount = 0; let firstLoad = true; let gameAns = 0;
+    let lastWinner = "";
 
-    // --- LOGIKA NOTIFIKASI ---
-    async function requestNotificationPermission() {
-      if ("Notification" in window) {
-        if (Notification.permission !== "granted") {
-          await Notification.requestPermission();
-        }
-      }
-    }
-
-    function showNotification(sender, text) {
-      if (Notification.permission === "granted" && document.hidden) {
-        new Notification(`Fosil33: ${sender}`, {
-          body: text,
-          icon: "https://cdn-icons-png.flaticon.com/512/5968/5968841.png"
-        });
-      }
-    }
+    const daftarKata = [
+      { warga: "Kucing", impostor: "Harimau" },
+      { warga: "Masjid", impostor: "Musholla" },
+      { warga: "Buku", impostor: "Novel" },
+      { warga: "Kopi", impostor: "Teh" },
+      { warga: "Sajadah", impostor: "Karpet" }
+    ];
 
     window.handleAuth = async () => {
-      const userVal = document.getElementById('username').value.trim().toLowerCase();
-      const passVal = document.getElementById('password').value.trim();
-      if (!userVal || !passVal) return;
-      const userDoc = await getDoc(doc(usersRef, userVal));
-      if (userDoc.exists()) {
-        if (userDoc.data().pass === passVal) startApp(userVal);
-        else document.getElementById('auth-msg').innerText = "Password salah!";
-      } else {
-        await setDoc(doc(usersRef, userVal), { pass: passVal });
-        startApp(userVal);
-      }
+      const u = document.getElementById('username').value.trim().toLowerCase();
+      const p = document.getElementById('password').value.trim();
+      if (!u || !p) return;
+      const d = await getDoc(doc(usersRef, u));
+      if (d.exists() && d.data().pass === p) startApp(u);
+      else if (!d.exists()) { await setDoc(doc(usersRef, u), { pass: p }); startApp(u); }
+      else document.getElementById('auth-msg').innerText = "Password salah!";
     };
 
-    function startApp(user) {
-      namaUser = user; myID = user;
+    function startApp(u) {
+      namaUser = u; myID = u;
       document.getElementById('auth-screen').style.display = 'none';
       document.getElementById('main-app').style.display = 'flex';
-      requestNotificationPermission(); 
       initChat();
     }
 
-    window.secretAdminTap = async () => {
-      if (namaUser !== 'admin') return; 
-      adminTapCount++;
-      if (adminTapCount >= 5) {
-        adminTapCount = 0;
-        const modal = document.getElementById('admin-modal');
-        const list = document.getElementById('member-list');
-        modal.style.display = 'flex';
-        list.innerHTML = "Mengambil data...";
-        
-        const snap = await getDocs(usersRef);
-        list.innerHTML = "";
-        snap.forEach(d => {
-          const row = document.createElement('div');
-          row.className = 'member-row';
-          row.innerHTML = `<span style="font-weight:bold;">👤 ${d.id}</span><span style="font-size:12px; color:gray;">Password: ${d.data().pass}</span>`;
-          list.appendChild(row);
-        });
-      }
-      setTimeout(() => { adminTapCount = 0; }, 2000);
+    window.openLoneWolf = () => {
+      const a = Math.floor(Math.random() * 80) + 10;
+      const b = Math.floor(Math.random() * 80) + 10;
+      gameAns = a + b;
+      document.getElementById('question').innerText = `${a} + ${b}`;
+      document.getElementById('game-modal').style.display = 'flex';
+      document.getElementById('game-answer').value = ""; document.getElementById('game-answer').focus();
+    };
+    window.closeGame = () => { document.getElementById('game-modal').style.display = 'none'; };
+    window.checkLoneWolf = async () => {
+      if (parseInt(document.getElementById('game-answer').value) === gameAns) {
+        closeGame();
+        await addDoc(colRef, { user: "SYSTEM 🐺", text: `🔥 @${namaUser} MENANG! Gelar Lone Wolf didapatkan.`, isSystem: true, time: serverTimestamp() });
+      } else { alert("Salah!"); }
     };
 
-    window.checkScroll = () => {
-      const c = document.getElementById('chat-container');
-      isBottom = (c.scrollHeight - c.scrollTop - c.clientHeight) < 100;
-      if (isBottom) document.getElementById('new-msg-btn').style.display = 'none';
-    };
-
-    window.scrollToBottom = () => {
-      const c = document.getElementById('chat-container');
-      c.scrollTop = c.scrollHeight;
-      document.getElementById('new-msg-btn').style.display = 'none';
+    window.mulaiGameImpostor = async () => {
+      const set = daftarKata[Math.floor(Math.random() * daftarKata.length)];
+      const snap = await getDocs(onlineRef);
+      let users = [];
+      snap.forEach(d => users.push(d.id));
+      if (users.length < 3) return alert("Butuh min 3 orang online!");
+      const imp = users[Math.floor(Math.random() * users.length)];
+      await addDoc(colRef, { 
+        user: "MODERATOR 🕵️", 
+        text: `GAME DIMULAI! Silakan cek kata kunci masing-masing. Jelaskan tanpa menyebutkan katanya!`, 
+        isSystem: true, isImpostorGame: true, targetImp: imp, kataW: set.warga, kataI: set.impostor, time: serverTimestamp() 
+      });
     };
 
     function initChat() {
-      const updateOnline = () => setDoc(doc(onlineRef, myID), { nama: namaUser, lastActive: Date.now() });
-      updateOnline();
-      setInterval(updateOnline, 15000);
+      const upd = () => setDoc(doc(onlineRef, myID), { nama: namaUser, lastActive: Date.now() });
+      upd(); setInterval(upd, 15000);
 
-      onSnapshot(onlineRef, (snapshot) => {
-        const now = Date.now();
-        let count = 0;
-        snapshot.forEach(d => { if (now - d.data().lastActive < 35000) count++; else deleteDoc(d.ref); });
-        document.getElementById('online-indicator').innerText = `🟢 ${count} Orang Online`;
+      onSnapshot(onlineRef, s => {
+        let c = 0; const n = Date.now();
+        s.forEach(d => { if (n - d.data().lastActive < 35000) c++; else deleteDoc(d.ref); });
+        document.getElementById('online-indicator').innerText = `🟢 ${c} Online`;
       });
 
-      onSnapshot(query(colRef, orderBy("time", "asc")), (snapshot) => {
+      onSnapshot(query(colRef, orderBy("time", "asc")), s => {
         const container = document.getElementById('chat-container');
-        
-        // Logika Notifikasi untuk Pesan Baru
-        if (!firstLoad) {
-          snapshot.docChanges().forEach((change) => {
-            if (change.type === "added") {
-              const d = change.doc.data();
-              if (d.user !== namaUser) {
-                showNotification(d.user, d.text);
-              }
-            }
-          });
-        }
-        firstLoad = false;
+        s.forEach(ds => {
+          const d = ds.data();
+          if (d.isSystem && d.text.includes("MENANG!")) {
+            const match = d.text.match(/@(\w+)/);
+            if (match) lastWinner = match[1];
+          }
+        });
 
         container.innerHTML = "";
-        snapshot.forEach(sDoc => {
-          const d = sDoc.data();
-          const isMe = d.user === namaUser;
-          const jam = d.time ? new Date(d.time.seconds * 1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '...';
+        s.forEach(ds => {
+          const d = ds.data(); const isMe = d.user === namaUser; const isSys = d.isSystem;
+          const badge = (d.user === lastWinner) ? " 👑" : "";
           const div = document.createElement('div');
-          div.className = `msg ${isMe ? 'me' : 'other'}`;
-          div.onclick = () => handleMsgInteraction(sDoc.id, d.user, d.text, isMe);
+          div.className = `msg ${isSys ? 'system' : (isMe ? 'me' : 'other')}`;
           
-          let replyHTML = d.replyTo ? `<div class="reply-box-preview"><span class="reply-sender" style="color:${isMe?'#adffad':'var(--primary)'}">${d.replyTo.user}</span><span class="reply-content">${d.replyTo.text}</span></div>` : "";
+          let actionBtn = "";
+          if (d.isInvite) actionBtn = `<br><button class="join-btn" onclick="openLoneWolf()">[ IKUTI TANTANGAN ]</button>`;
+          if (d.isImpostorGame) {
+            const k = (namaUser === d.targetImp) ? d.kataI : d.kataW;
+            actionBtn = `<br><button class="join-btn" onclick="alert('Kata kunci kamu: ${k}')">👁️ CEK KATA SAYA</button>`;
+          }
+
+          let content = isSys ? `<b>${d.text}</b>${actionBtn}` : `<span class="sender">${isMe ? 'Kamu' : d.user}${badge}</span>${d.replyTo ? `<div class="reply-box-preview"><span class="reply-sender">${d.replyTo.user}</span><span class="reply-content">${d.replyTo.text}</span></div>` : ""}<span>${d.text}</span>`;
           
-          div.innerHTML = `<span class="sender">${isMe ? 'Kamu' : d.user}</span>${replyHTML}<span style="font-size:14px; line-height:1.4;">${d.text}</span><span class="time">${jam}</span>${d.likes > 0 ? `<div class="heart">❤️ ${d.likes}</div>` : ""}`;
+          div.innerHTML = content + (isSys ? "" : `<span class="time">${d.time ? new Date(d.time.seconds*1000).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '...'}</span>`);
+          div.onclick = () => { if (!isSys) handleMsg(ds.id, d.user, d.text, isMe); };
           container.appendChild(div);
         });
-        if (isBottom) scrollToBottom();
-        else document.getElementById('new-msg-btn').style.display = 'block';
+        container.scrollTop = container.scrollHeight;
       });
 
-      const inputPesan = document.getElementById('msgInput');
-      inputPesan.addEventListener('input', () => {
-        if (inputPesan.value.length > 0) setDoc(doc(typingRef, myID), { nama: namaUser });
-        else deleteDoc(doc(typingRef, myID));
-      });
-      onSnapshot(typingRef, (snapshot) => {
-        let users = [];
-        snapshot.forEach(doc => { if (doc.id !== myID) users.push(doc.data().nama); });
-        document.getElementById('typing').innerText = users.length > 0 ? `${users.join(', ')} ngetik...` : '';
-      });
+      const inp = document.getElementById('msgInput');
+      inp.addEventListener('input', () => { if (inp.value) setDoc(doc(typingRef, myID), { nama: namaUser }); else deleteDoc(doc(typingRef, myID)); });
+      onSnapshot(typingRef, s => { let u = []; s.forEach(d => { if (d.id !== myID) u.push(d.data().nama); }); document.getElementById('typing').innerText = u.length ? `${u.join(', ')} ngetik...` : ''; });
     }
 
     window.kirim = async () => {
-      const input = document.getElementById('msgInput');
-      if (!input.value.trim()) return;
-      isBottom = true;
-      await addDoc(colRef, { user: namaUser, text: input.value, replyTo: selectedReply, likes: 0, time: serverTimestamp() });
-      input.value = ""; deleteDoc(doc(typingRef, myID)); cancelReply();
+      const i = document.getElementById('msgInput'); const val = i.value.trim();
+      if (!val) return;
+      if (val === "/matematika") {
+        i.value = ""; if (confirm("Kirim tantangan ke forum?")) {
+          await addDoc(colRef, { user: "SYSTEM 🤖", text: `📢 @${namaUser} menantang siapa pun adu cerdas!`, isSystem: true, isInvite: true, time: serverTimestamp() });
+          openLoneWolf();
+        }
+        return;
+      }
+      if (val === "/startimpostor") {
+        i.value = ""; mulaiGameImpostor(); return;
+      }
+      await addDoc(colRef, { user: namaUser, text: val, replyTo: selectedReply, time: serverTimestamp() });
+      i.value = ""; cancelReply(); deleteDoc(doc(typingRef, myID));
     };
 
-    window.handleMsgInteraction = (id, user, text, isMe) => {
+    window.handleMsg = (id, u, t, isMe) => {
       const now = Date.now();
       if (now - lastTap < 300) updateDoc(doc(db, "pesan", id), { likes: increment(1) });
       else {
-        if(isMe || namaUser === 'admin') { if(confirm("Hapus?")) deleteDoc(doc(db, "pesan", id)); }
+        if (isMe || namaUser === 'admin') { if (confirm("Hapus?")) deleteDoc(doc(db, "pesan", id)); }
         else {
-          selectedReply = { user, text };
+          selectedReply = { user: u, text: t };
           document.getElementById('reply-preview').style.display = 'flex';
-          document.getElementById('reply-text').innerText = `Balas ${user}: ${text.substring(0,15)}...`;
+          document.getElementById('reply-text').innerText = `Balas ${u}: ${t.substring(0,15)}...`;
           document.getElementById('msgInput').focus();
         }
       }
@@ -293,7 +282,7 @@
 
     window.cancelReply = () => { selectedReply = null; document.getElementById('reply-preview').style.display = 'none'; };
     window.addEmoji = (e) => { const i = document.getElementById('msgInput'); i.value += e; i.focus(); };
-    document.getElementById('msgInput')?.addEventListener("keypress", (e) => { if (e.key === "Enter") kirim(); });
+    document.getElementById('msgInput').addEventListener("keypress", (e) => { if (e.key === "Enter") kirim(); });
   </script>
 </body>
 </html>
